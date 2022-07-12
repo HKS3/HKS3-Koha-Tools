@@ -13,10 +13,13 @@ our @EXPORT_OK = qw(get_marc_via_id);
 use List::Util qw/ any /;
 
 use LWP;
-use File::Slurp;
+# use File::Slurp;
+use Path::Tiny;
 use Getopt::Long;
 use DateTime;
 use Data::Dumper;
+use Encode qw(decode encode);
+
 
 my $web_resources = {
     'dnb' => {
@@ -45,7 +48,7 @@ sub get_marc_via_id {
         printf("%s \n", $filename);        
 
         if (-f $filename) {
-            $xml = read_file($filename);
+            $xml = path($filename)->slurp_utf8;
             printf("length %d \n", length($xml));
             next if length($xml) == 0;
             return $xml;
@@ -70,6 +73,9 @@ sub fetch_marc_from_url {
     print "$url \n";
     my $req = HTTP::Request->new(GET => $url);
     my $ua = LWP::UserAgent->new;
+    $ua->default_header(
+        'Accept-Charset' => 'utf-8',
+    );
     my $agent = "sru downloader";
     $ua->agent($agent);
 
@@ -87,7 +93,9 @@ sub fetch_marc_from_url {
             $xml = XML::XPath::XMLParser::as_string($node);
             last;
         }
-        write_file($filename, {binmode => ':raw'}, $xml);
+        # write_file($filename, {binmode => ':raw'}, $xml);
+        # write_file($filename, {binmode => ':raw'}, $xml);
+        path($filename)->spew_utf8($xml);
         return $xml;
     }
     else {
