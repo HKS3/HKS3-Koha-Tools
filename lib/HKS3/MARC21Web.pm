@@ -30,6 +30,10 @@ my $web_resources = {
         url => "http://lx2.loc.gov:210/lcdb?version=1.1&operation=searchRetrieve&query=bath.%s=%s&maximumRecords=10&recordSchema=MARCXML",
         xml => '//zs:searchRetrieveResponse/zs:records/zs:record/zs:recordData/record',
      },
+    'k10p' => {
+        url => "https://sru.bsz-bw.de/swb?version=1.1&query=pica.isb=%s&operation=searchRetrieve&maximumRecords=10&recordSchema=marcxmlk10os",
+        xml => '//zs:searchRetrieveResponse/zs:records/zs:record/zs:recordData/record',
+     },
 };
 
 sub get_marc_via_id {
