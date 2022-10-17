@@ -31,7 +31,7 @@ my $web_resources = {
         xml => '//zs:searchRetrieveResponse/zs:records/zs:record/zs:recordData/record',
      },
     'k10p' => {
-        url => "https://sru.bsz-bw.de/swb?version=1.1&query=pica.isb=%s&operation=searchRetrieve&maximumRecords=10&recordSchema=marcxmlk10os",
+        url => "https://sru.bsz-bw.de/swb?version=1.1&query=pica.%s=%s&operation=searchRetrieve&maximumRecords=10&recordSchema=marcxmlk10os",
         xml => '//zs:searchRetrieveResponse/zs:records/zs:record/zs:recordData/record',
      },
 };
@@ -48,6 +48,8 @@ sub get_marc_via_id {
     foreach my $source (@$sources) {
 
         print Dumper $web_resources->{$source};
+        # in k10plus the search term for isbn is isb
+        $type = ($source eq 'k10p' && $type eq 'isbn') ? 'isb' : 'isbn';
         my $filename  = sprintf("%s/%s-sru-export-%s-%s.xml", $cachedir, $source, $type, $id);
         printf("%s \n", $filename);        
 
@@ -106,5 +108,26 @@ sub fetch_marc_from_url {
             printf("Response %s\n", $response->code);
     }
 }
+
+sub get_empty_record {
+my $xml = <<XML;
+<?xml version="1.0" encoding="UTF-8"?>
+<record
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd"
+    xmlns="http://www.loc.gov/MARC21/slim">
+
+  <leader>00199nam a22000977a 4500</leader>
+  <controlfield tag="005">20221016160626.0</controlfield>
+  <controlfield tag="008">221016b        |||||||| |||| 00| 0 eng d</controlfield>
+  <datafield tag="040" ind1=" " ind2=" ">
+    <subfield code="c">intern</subfield>
+  </datafield>
+</record>
+XML
+
+return $xml;
+}
+
 
 1;
