@@ -119,15 +119,29 @@ my $xml = <<XML;
 
   <leader>00199nam a22000977a 4500</leader>
   <controlfield tag="005">20221016160626.0</controlfield>
-  <controlfield tag="008">221016b        |||||||| |||| 00| 0 eng d</controlfield>
-  <datafield tag="040" ind1=" " ind2=" ">
-    <subfield code="c">intern</subfield>
-  </datafield>
+  <controlfield tag="008">221016b        |||||||| |||| 00| 0 ger d</controlfield>
 </record>
 XML
 
 return $xml;
 }
 
+sub get_empty_auth_record {
+my $xml = <<XML;
+<?xml version="1.0" encoding="UTF-8"?>
+<record
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd"
+    xmlns="http://www.loc.gov/MARC21/slim">
+
+  <leader>00207nz  a2200109n  4500</leader>
+  <controlfield tag="005">20221016160626.0</controlfield>
+  <controlfield tag="008">221108|| aca||babn           | a|a     d</controlfield>
+</record>
+
+XML
+
+return $xml;
+}
 
 1;
