@@ -13,33 +13,46 @@ use MARC::Charset;
 
 MARC::Charset->ignore_errors(1);
 
+my $infile = $ARGV[0];
+
+my $csv = csv(in => $infile,
+               sep_char=> ",",
+               quote_char => '"',
+               headers => "auto",
+               encoding => "UTF-8",
+             );
+
+
 my $file = MARC::File::XML->out( 'marc.xml' );
-my $xml = HKS3::MARC21Web::get_empty_auth_record;
 
-my $record = MARC::Record->new_from_xml( $xml, 'UTF-8', 'MARC21' );
-$record->encoding( 'UTF-8' );
-
-my @fields;
-push @fields, MARC::Field->new(
-     '040','','',
-         'c' => 'intern'
- );
-push @fields, MARC::Field->new(
-     '150','','',
-         'a' => 'Test',
- );
-
-push @fields, MARC::Field->new(
-     '942','','',
-         'a' => 'TOPIC_TERM',
-);
-
-my @a= (localtime) [5,4,3,2,1,0]; $a[0]+=1900; $a[1]++;
-$record->field('005')->update(sprintf("%4d%02d%02d%02d%02d%04.1f",@a));
-
-$record->insert_fields_ordered(@fields);
-
-$file->write($record);
+for my $line (@$csv) {
+    my $xml = HKS3::MARC21Web::get_empty_auth_record;
+    
+    my $record = MARC::Record->new_from_xml( $xml, 'UTF-8', 'MARC21' );
+    $record->encoding( 'UTF-8' );
+    
+    my @fields;
+    push @fields, MARC::Field->new(
+         '040','','',
+             'c' => 'intern'
+     );
+    push @fields, MARC::Field->new(
+         '150','','',
+             'a' => $line->{Auth},
+     );
+    
+    push @fields, MARC::Field->new(
+         '942','','',
+             'a' => 'TOPIC_TERM',
+    );
+    
+    my @a= (localtime) [5,4,3,2,1,0]; $a[0]+=1900; $a[1]++;
+    $record->field('005')->update(sprintf("%4d%02d%02d%02d%02d%04.1f",@a));
+    
+    $record->insert_fields_ordered(@fields);
+    
+    $file->write($record);
+}
 $file->close();
 
 __END__
