@@ -6,6 +6,8 @@ RUN    apt-get update \
        vim less tree ack git \
        carton cpanminus \
        libexpat1-dev \
+       libxml2-dev \
+       openssl libssl-dev zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /home/hks3/HKS3-Koha-Tools
