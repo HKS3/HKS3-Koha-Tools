@@ -42,7 +42,7 @@ sub get_marc_via_id {
     my $cachedir = shift;
     my $sources = shift; # should be an arrayref [loc, dnb, ]
     my $xml;
-    
+
     if ( ! -d $cachedir ) {
         die "not a directory: $cachedir";
     }
@@ -61,7 +61,7 @@ sub get_marc_via_id {
             $type = 'isb';
         }
         my $filename  = sprintf("%s/%s-sru-export-%s-%s.xml", $cachedir, $source, $type, $id);
-        printf("%s \n", $filename);        
+        printf("%s \n", $filename);
 
         if (-f $filename) {
             $xml = path($filename)->slurp_utf8;
@@ -69,13 +69,13 @@ sub get_marc_via_id {
             next if length($xml) == 0;
             return $xml;
         }
-    
+
         # printf("Source %s\n", $source->{name});
         my $url = sprintf($web_resources->{$source}->{url}, $type, $id);
         $xml = fetch_marc_from_url($url, $filename, $web_resources->{$source}->{xml});
         sleep(5);
         return $xml if $xml &&  length($xml) > 0;
-    }    
+    }
 
     return $xml;
 }
@@ -84,8 +84,8 @@ sub fetch_marc_from_url {
     my $url = shift;
     my $filename = shift;
     my $record_node = shift;
-        
-    
+
+
     print "URL $url \n";
     my $req = HTTP::Request->new(GET => $url);
     my $ua = LWP::UserAgent->new;
@@ -116,6 +116,8 @@ sub fetch_marc_from_url {
     }
     else {
         printf("Response %s\n", $response->code);
+        #use Data::Dumper;
+        #warn Dumper($response);
     }
 }
 
