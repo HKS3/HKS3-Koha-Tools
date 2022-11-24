@@ -3,8 +3,13 @@ use 5.018;
 use warnings;
 
 use Cwd;
-use HKS3::MARC21Web;
 use MAB2::Parser::Disk;
+use HKS3::MARC21Web qw/
+                       get_marc_via_id
+                       get_empty_auth_record
+                       marc_record_from_xml
+                       add_field
+                    /;
 
 my $filename = $ARGV[0];
 my $cwd = getcwd();
@@ -30,20 +35,20 @@ while ( my $record_hash = $parser->next() ) {
     my $marc;
     if ($isbn) {
         $count_isbn++;
-        $xml = HKS3::MARC21Web::get_marc_via_id($isbn, 'ISBN', $cache_dir, ['dnb']);
+        $xml = get_marc_via_id($isbn, 'ISBN', $cache_dir, ['dnb']);
     }
 
     if ($xml) {
-        $marc = HKS3::MARC21Web::marc_record_from_xml($xml);
+        $marc = marc_record_from_xml($xml);
     }
     else {
-        $xml = HKS3::MARC21Web::get_empty_auth_record();
-        $marc = HKS3::MARC21Web::marc_record_from_xml($xml);
+        $xml = get_empty_auth_record();
+        $marc = marc_record_from_xml($xml);
         for my $field ($record->@*) {
             if (exists $mapping_mab2_marc->{ $field->[0] }) {
                 my $m = $mapping_mab2_marc->{ $field->[0] };
                 #say $m->{name} . ': ' . $field->[3];
-                HKS3::MARC21Web::add_field(
+                add_field(
                     $marc,
                     $m->{'marc-field'},
                     $m->{'marc-subfield'},
@@ -58,7 +63,7 @@ while ( my $record_hash = $parser->next() ) {
         }
     }
 
-    #$record = HKS3::MARC21Web::marc_record_from_xml($xml);
+    #$record = marc_record_from_xml($xml);
 }
 say "$count/$count_isbn";
 
