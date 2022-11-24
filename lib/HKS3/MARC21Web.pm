@@ -49,7 +49,9 @@ sub get_marc_via_id {
 
         print Dumper $web_resources->{$source};
         # in k10plus the search term for isbn is isb
-        $type = ($source eq 'k10p' && $type eq 'isbn') ? 'isb' : 'isbn';
+        if ($source eq 'k10p' && $type eq 'isbn') {
+            $type = 'isb';
+        }
         my $filename  = sprintf("%s/%s-sru-export-%s-%s.xml", $cachedir, $source, $type, $id);
         printf("%s \n", $filename);        
 
@@ -76,7 +78,7 @@ sub fetch_marc_from_url {
     my $record_node = shift;
         
     
-    print "$url \n";
+    print "URL $url \n";
     my $req = HTTP::Request->new(GET => $url);
     my $ua = LWP::UserAgent->new;
     $ua->default_header(
