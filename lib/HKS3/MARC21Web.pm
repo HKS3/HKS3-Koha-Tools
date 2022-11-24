@@ -110,6 +110,7 @@ sub fetch_marc_from_url {
             $xml = XML::XPath::XMLParser::as_string($node);
             last;
         }
+        $xml = '' if ! defined $xml;
         # write_file($filename, {binmode => ':raw'}, $xml);
         path($filename)->spew_utf8($xml);
         return $xml;
