@@ -5,10 +5,17 @@ use warnings;
 use Encode;
 use feature qw/say/;
 use POSIX qw();
-use Exporter 'import';
 use XML::XPath;
+use Exporter qw/import/;
 
-our @EXPORT_OK = qw(get_marc_via_id);
+our @EXPORT_OK = qw/
+                     get_marc_via_id
+                     get_empty_record
+                     get_empty_auth_record
+                     marc_record_from_xml
+                     add_field
+                 /;
+
 
 use List::Util qw/ any /;
 
