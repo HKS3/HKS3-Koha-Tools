@@ -107,7 +107,7 @@ sub fetch_marc_from_url {
         return $xml;
     }
     else {
-            printf("Response %s\n", $response->code);
+        printf("Response %s\n", $response->code);
     }
 }
 

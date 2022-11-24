@@ -1,0 +1,11 @@
+version: '3.6'
+services:
+    app:
+        container_name: hks3-tools-app
+        build: .
+        volumes:
+            - type: bind
+              source: .
+              target: /home/hks3/HKS3-Koha-Tools
+        environment:
+          - PERL5LIB=/home/hks3/HKS3-Koha-Tools/lib

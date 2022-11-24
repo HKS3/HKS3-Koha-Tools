@@ -1,0 +1,10 @@
+requires 'Encode';
+requires 'Exporter';
+requires 'XML::XPath';
+requires 'List::Util';
+requires 'LWP';
+requires 'Path::Tiny';
+requires 'Getopt::Long';
+requires 'DateTime';
+requires 'Data::Dumper';
+requires 'Encode';
