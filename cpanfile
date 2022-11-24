@@ -10,3 +10,5 @@ requires 'DateTime';
 requires 'Data::Dumper';
 requires 'Encode';
 requires 'MAB2::Parser::Disk';
+requires 'MARC::File::XML';
+requires 'MARC::Charset';

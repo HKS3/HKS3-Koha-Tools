@@ -579,6 +579,15 @@ DISTRIBUTIONS
       YAML::XS 0.34
       namespace::clean 0
       perl v5.10.1
+  Class-Accessor-0.51
+    pathname: K/KA/KASEI/Class-Accessor-0.51.tar.gz
+    provides:
+      Class::Accessor 0.51
+      Class::Accessor::Fast 0.51
+      Class::Accessor::Faster 0.51
+    requirements:
+      ExtUtils::MakeMaker 0
+      base 1.01
   Class-Data-Inheritable-0.09
     pathname: R/RS/RSHERER/Class-Data-Inheritable-0.09.tar.gz
     provides:
@@ -1680,6 +1689,46 @@ DISTRIBUTIONS
       Log::Any::Test 1.711
     requirements:
       ExtUtils::MakeMaker 0
+  MARC-Charset-1.35
+    pathname: G/GM/GMCHARLT/MARC-Charset-1.35.tar.gz
+    provides:
+      MARC::Charset 1.35
+      MARC::Charset::Code undef
+      MARC::Charset::Compiler undef
+      MARC::Charset::Constants undef
+      MARC::Charset::Table undef
+    requirements:
+      Class::Accessor 0
+      ExtUtils::MakeMaker 0
+      Test::More 0
+      Unicode::Normalize 0
+      XML::SAX 0
+  MARC-File-XML-1.0.5
+    pathname: G/GM/GMCHARLT/MARC-File-XML-1.0.5.tar.gz
+    provides:
+      MARC::File::XML 1.000005
+    requirements:
+      ExtUtils::MakeMaker 0
+      MARC::Charset 0.98
+      MARC::Record 2
+      Test::Warn 0
+      XML::LibXML 1.66
+  MARC-Record-2.0.7
+    pathname: G/GM/GMCHARLT/MARC-Record-2.0.7.tar.gz
+    provides:
+      MARC::Batch undef
+      MARC::Field undef
+      MARC::File undef
+      MARC::File::Encode undef
+      MARC::File::MicroLIF undef
+      MARC::File::USMARC undef
+      MARC::Record 2.000007
+    requirements:
+      Carp 0
+      ExtUtils::MakeMaker 0
+      File::Find 0
+      File::Spec 0
+      Test::More 0
   MIME-Types-2.22
     pathname: M/MA/MARKOV/MIME-Types-2.22.tar.gz
     provides:

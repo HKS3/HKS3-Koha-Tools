@@ -36,8 +36,7 @@ while ( my $record_hash = $parser->next() ) {
         $xml = HKS3::MARC21Web::get_empty_auth_record();
     }
 
-    #$record = MARC::Record->new_from_xml( $xml, 'UTF-8', 'MARC21' );
-    #$record->encoding( 'UTF-8' );
+    $record = HKS3::MARC21Web::marc_record_from_xml($xml);
 }
 say "$count/$count_isbn";
 
