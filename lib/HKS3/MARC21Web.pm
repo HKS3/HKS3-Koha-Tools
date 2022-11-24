@@ -43,9 +43,17 @@ sub get_marc_via_id {
     my $sources = shift; # should be an arrayref [loc, dnb, ]
     my $xml;
     
+    if ( ! -d $cachedir ) {
+        die "not a directory: $cachedir";
+    }
+
     # $isbn =~ s/.*\/(.*)/$1/g;
 
     foreach my $source (@$sources) {
+
+        if (! exists( $web_resources->{$source} ) ) {
+            die "Source '$source' not available. Use one of these: [" . join(', ', keys $web_resources->%*) . ']';
+        }
 
         print Dumper $web_resources->{$source};
         # in k10plus the search term for isbn is isb
