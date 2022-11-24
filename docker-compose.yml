@@ -7,5 +7,3 @@ services:
             - type: bind
               source: .
               target: /home/hks3/HKS3-Koha-Tools
-        environment:
-          - PERL5LIB=/home/hks3/HKS3-Koha-Tools/lib

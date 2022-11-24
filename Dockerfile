@@ -10,5 +10,6 @@ RUN    apt-get update \
 
 WORKDIR /home/hks3/HKS3-Koha-Tools
 
-#CMD ["tail", "-f", "/dev/null"]
+ENV PERL5LIB="${PERL5LIB}:/home/hks3/HKS3-Koha-Tools/lib:/home/hks3/HKS3-Koha-Tools/local/lib/perl5"
+
 CMD ["bash", "./entrypoint.sh"]
