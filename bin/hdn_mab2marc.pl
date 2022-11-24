@@ -84,26 +84,21 @@ sub strip_isbn_prefix {
 
 sub get_mapping {
     # name, mab2-field, mab2-subfield, marc21-field, marc21-subfield
-#    my $mapping_data = [
-#        [ 'Titel', '331', ' ', '245', 'a', ' ', ' ' ],
-#        [ 'ISBN', '540', ' ', '020', 'a', ' ', ' ' ],
-#    ];
-#    my $mapping_mab2_marc = {};
-#    for my $m ($mapping_data->@*) {
-#        $mapping_mab2_marc->{ $m->[1] } = {
-#                                            name            => $m->[0],
-#                                            'mab2-subfield' => $m->[2],
-#                                            'marc-field'    => $m->[3],
-#                                            'marc-subfield' => $m->[4],
-#                                            'marc-ind1'     => $m->[5],
-#                                            'marc-ind2'     => $m->[6],
-#                                          }
-#    }
+    my $mapping_data = [
+        [ 'Titel', '331', ' ', '245', 'a', ' ', ' ' ],
+        [ 'ISBN', '540', ' ', '020', 'a', ' ', ' ' ],
+    ];
+    my $mapping_mab2_marc = {};
+    for my $m ($mapping_data->@*) {
+        $mapping_mab2_marc->{ $m->[1] } = {
+                                            name            => $m->[0],
+                                            'mab2-subfield' => $m->[2],
+                                            'marc-field'    => $m->[3],
+                                            'marc-subfield' => $m->[4],
+                                            'marc-ind1'     => $m->[5],
+                                            'marc-ind2'     => $m->[6],
+                                          }
+    }
 
-    my $mapping_mab2_marc = {
-        # mab2-field => name, mab2-subfield, marc21-field, marc21-subfield
-        '331' =>  { name => 'Titel', 'mab2-subfield' => ' ', 'marc-field' => '245', 'marc-subfield' =>  'a', 'marc-ind1' => ' ', 'marc-ind2' => ' '},
-        '540' =>  { name => 'ISBN', 'mab2-subfield' => 'a', 'marc-field' => '020', 'marc-subfield' =>  'a', 'marc-ind1' => ' ', 'marc-ind2' => ' '},
-    };
     return $mapping_mab2_marc;
 }
