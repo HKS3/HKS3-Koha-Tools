@@ -20,7 +20,6 @@ use DateTime;
 use Data::Dumper;
 use Encode qw(decode encode);
 use MARC::File::XML qw//;
-MARC::File::XML->default_record_format('MARC21');
 use MARC::Charset;
 
 my $web_resources = {
@@ -160,6 +159,7 @@ return $xml;
 
 sub marc_record_from_xml {
     my $xml = shift;
+    #MARC::File::XML->default_record_format('MARC21');
     my $record = MARC::Record->new_from_xml( $xml, 'UTF-8', 'MARC21' );
     $record->encoding( 'UTF-8' );
     return $record;
