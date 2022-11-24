@@ -56,7 +56,7 @@ sub get_marc_via_id {
             die "Source '$source' not available. Use one of these: [" . join(', ', keys $web_resources->%*) . ']';
         }
 
-        print Dumper $web_resources->{$source};
+        #print Dumper $web_resources->{$source};
         # in k10plus the search term for isbn is isb
         if ($source eq 'k10p' && $type eq 'isbn') {
             $type = 'isb';
@@ -66,7 +66,7 @@ sub get_marc_via_id {
 
         if (-f $filename) {
             $xml = path($filename)->slurp_utf8;
-            printf("length %d \n", length($xml));
+            printf("file length %d \n", length($xml));
             next if length($xml) == 0;
             return $xml;
         }
@@ -103,14 +103,13 @@ sub fetch_marc_from_url {
     my $response = $ua->request($req);
     if ($response->is_success) {
         my $xp = XML::XPath->new(xml => $response->content);
-        printf("%s \n", $record_node);
+        #printf("Record Node: %s \n", $record_node);
         my $nodeset = $xp->find($record_node);
         my $xml;
         foreach my $node ($nodeset->get_nodelist) {
             $xml = XML::XPath::XMLParser::as_string($node);
             last;
         }
-        # write_file($filename, {binmode => ':raw'}, $xml);
         # write_file($filename, {binmode => ':raw'}, $xml);
         path($filename)->spew_utf8($xml);
         return $xml;
