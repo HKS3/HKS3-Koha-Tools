@@ -10,19 +10,23 @@ use HKS3::MARC21Web qw/
                        marc_record_from_xml
                        add_field
                     /;
+use Text::CSV qw/ csv /;
+
+die "CACHE_DIR not defined" unless $ENV{CACHE_DIR};
+my $cwd = getcwd();
 
 my $filename = $ARGV[0];
-my $cwd = getcwd();
 my $file = $cwd . '/' . $filename;
-
 die "Not a file. ($file)" unless -f $file;
+
+my $mappingfilename = $ARGV[1];
+my $mappingfile = $cwd . '/' . $mappingfilename;
+die "Not a file. ($mappingfile)" unless -f $mappingfile;
 
 my $parser = MAB2::Parser::Disk->new( $file );
 
 my $count = 0;
 my $count_isbn = 0;
-
-die "CACHE_DIR not defined" unless $ENV{CACHE_DIR};
 my $cache_dir = $ENV{CACHE_DIR};
 
 my $mapping_mab2_marc = get_mapping();
@@ -88,11 +92,61 @@ sub strip_isbn_prefix {
 }
 
 sub get_mapping {
-    # name, mab2-field, mab2-subfield, marc21-field, marc21-subfield
+
+    my $csv = csv(
+        in         => $mappingfile,
+        sep_char   => ";",
+        quote_char => '"',
+        headers    => "auto",
+        encoding   => "UTF-8",
+    );
+    # name, mab2-field, mab2-subfield, marc21-field, marc21-subfield, ind1, ind2
     my $mapping_data = [
-        [ 'Titel', '331', ' ', '245', 'a', ' ', ' ' ],
-        [ 'ISBN', '540', ' ', '020', 'a', ' ', ' ' ],
+        #[ 'Titel', '331', ' ', '245', 'a', ' ', ' ' ],
+        #[ 'ISBN', '540', ' ', '020', 'a', ' ', ' ' ],
     ];
+    for my $mapping (@$csv) {
+        my $re_MAB2 = qr/
+                     ^
+                     (\d\d\d)
+                     ([a-z])?
+                     $
+        /xms;
+        my ($field_MAB, $subfield_MAB) = $mapping->{MAB2} =~ $re_MAB2;
+
+        my $re_MARC21 = qr/
+                     ^
+                     (\d\d\d)
+                     ([a-z])
+                     (?:
+                         \ 
+                         ([\w\#])
+                         ([\w\#])
+                     )?
+                     $
+        /xms;
+        my ($field_MARC, $subfield_MARC, $ind1_MARC, $ind2_MARC) = $mapping->{MARC21} =~ $re_MARC21;
+
+        if ($field_MAB && $field_MARC) {
+            say "map " . $mapping->{MAB2} . " to " . $mapping->{MARC21};
+            push $mapping_data->@*,
+                 [
+                     $mapping->{Bezeichnung},
+                     $field_MAB,
+                     $subfield_MAB,
+                     $field_MARC,
+                     $subfield_MARC,
+                     $ind1_MARC,
+                     $ind2_MARC,
+                 ];
+        }
+        else {
+          print "invalid mapping: " . $mapping->{MAB2} . " to " . $mapping->{MARC21};
+          say " (MAB2 ERROR)" unless $field_MAB;
+          say " (MARC21 ERROR)" unless $field_MARC;
+        }
+    }
+
     my $mapping_mab2_marc = {};
     for my $m ($mapping_data->@*) {
         $mapping_mab2_marc->{ $m->[1] } = {
