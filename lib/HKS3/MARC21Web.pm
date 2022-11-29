@@ -172,9 +172,9 @@ sub marc_record_from_xml {
 }
 
 sub add_field {
-    my ($record, $field, $subfield, $ind1, $ind2, $value) = @_;
+    my ($record, $field, $ind1, $ind2, $subfield, $value) = @_;
     $record->append_fields(
-        MARC::Field->new( $field, $subfield, $ind1, $ind2, $value )
+        MARC::Field->new( $field, $ind1, $ind2, $subfield, $value )
     );
 }
 

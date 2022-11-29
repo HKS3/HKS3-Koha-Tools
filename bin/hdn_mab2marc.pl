@@ -32,33 +32,35 @@ my $cache_dir = $ENV{CACHE_DIR};
 
 my $mapping_mab2_marc = get_mapping();
 
-while ( my $record_hash = $parser->next() ) {
-    my $record = $record_hash->{record};
-    my $isbn = get_isbn($record);
+my $marc_file = get_marc_file( 'hdn_marc.xml' );
+
+while ( my $mab_record_hash = $parser->next() ) {
+    my $mab_record = $mab_record_hash->{record};
+    my $isbn = get_isbn($mab_record);
     $count++;
     my $xml = '';
-    my $marc;
+    my $marc_record;
     if ($isbn) {
         $count_isbn++;
         $xml = get_marc_via_id($isbn, 'ISBN', $cache_dir, ['dnb']);
     }
 
     if ($xml) {
-        $marc = marc_record_from_xml($xml);
+        $marc_record = marc_record_from_xml($xml);
     }
     else {
         $xml = get_empty_auth_record();
-        $marc = marc_record_from_xml($xml);
-        for my $field ($record->@*) {
+        $marc_record = marc_record_from_xml($xml);
+        for my $field ($mab_record->@*) {
             if (exists $mapping_mab2_marc->{ $field->[0] }) {
                 my $m = $mapping_mab2_marc->{ $field->[0] };
                 #say $m->{name} . ': ' . $field->[3];
                 add_field(
-                    $marc,
+                    $marc_record,
                     $m->{'marc-field'},
-                    $m->{'marc-subfield'},
                     $m->{'marc-ind1'},
                     $m->{'marc-ind2'},
+                    $m->{'marc-subfield'},
                     $field->[3],
                 );
             }
@@ -68,8 +70,9 @@ while ( my $record_hash = $parser->next() ) {
         }
     }
 
-    #$record = marc_record_from_xml($xml);
+    $marc_file->write($marc_record);
 }
+
 say "$count/$count_isbn";
 
 sub get_isbn {
