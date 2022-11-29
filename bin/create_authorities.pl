@@ -23,6 +23,7 @@ my $csv = csv(in => $infile,
              );
 
 
+# Notiz von david: sollte das ned mit UTF-8 encoding sein? ...>>out( 'marc.xml', 'UTF-8' );
 my $file = MARC::File::XML->out( 'marc.xml' );
 
 for my $line (@$csv) {
