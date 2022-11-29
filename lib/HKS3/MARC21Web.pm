@@ -14,6 +14,7 @@ our @EXPORT_OK = qw/
                      get_empty_auth_record
                      marc_record_from_xml
                      add_field
+                     get_marc_file
                  /;
 
 
@@ -26,6 +27,7 @@ use Getopt::Long;
 use DateTime;
 use Data::Dumper;
 use Encode qw(decode encode);
+use MARC::Record;
 use MARC::File::XML qw//;
 use MARC::Charset;
 
@@ -158,7 +160,6 @@ my $xml = <<XML;
   <controlfield tag="005">20221016160626.0</controlfield>
   <controlfield tag="008">221108|| aca||babn           | a|a     d</controlfield>
 </record>
-
 XML
 
 return $xml;
@@ -166,9 +167,7 @@ return $xml;
 
 sub marc_record_from_xml {
     my $xml = shift;
-    #MARC::File::XML->default_record_format('MARC21');
     my $record = MARC::Record->new_from_xml( $xml, 'UTF-8', 'MARC21' );
-    $record->encoding( 'UTF-8' );
     return $record;
 }
 
@@ -177,6 +176,15 @@ sub add_field {
     $record->append_fields(
         MARC::Field->new( $field, $subfield, $ind1, $ind2, $value )
     );
+}
+
+sub get_marc_file {
+    my $filename = shift;
+    die "output file exists. ($filename)" if -f $filename;
+
+    MARC::File::XML->default_record_format('MARC21');
+    my $file = MARC::File::XML->out( $filename, 'UTF-8' );
+    return $file;
 }
 
 1;

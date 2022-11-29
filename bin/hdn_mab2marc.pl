@@ -9,6 +9,7 @@ use HKS3::MARC21Web qw/
                        get_empty_auth_record
                        marc_record_from_xml
                        add_field
+                       get_marc_file
                     /;
 use Text::CSV qw/ csv /;
 
