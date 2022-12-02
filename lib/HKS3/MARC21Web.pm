@@ -38,10 +38,11 @@ my $web_resources = {
 };
 
 sub get_marc_via_id {
-    my $id = shift;
-    my $type = shift;
-    my $cachedir = shift;
-    my $sources = shift; # should be an arrayref [loc, dnb, ]
+    my ($id, $type, $cachedir, $sources, $verbose) = @_;
+    # $sources should be an arrayref [loc, dnb, ]
+
+    $verbose //= 0;
+
     my $xml;
     
     # $isbn =~ s/.*\/(.*)/$1/g;
@@ -54,11 +55,12 @@ sub get_marc_via_id {
             $type = $source eq 'k10p' ? 'isb' : 'isbn';
         }
         my $filename  = sprintf("%s/%s-sru-export-%s-%s.xml", $cachedir, $source, $type, $id);
-        printf("%s \n", $filename);        
+
+        printf("%s \n", $filename) if $verbose;
 
         if (-f $filename) {
             $xml = path($filename)->slurp_utf8;
-            printf("length %d \n", length($xml));
+            printf("file length %d \n", length($xml)) if $verbose;
             next if length($xml) == 0;
             return $xml;
         }

@@ -54,7 +54,7 @@ while ( my $mab_record_hash = $parser->next() ) {
         for my $field ($mab_record->@*) {
             if (exists $mapping_mab2_marc->{ $field->[0] }) {
                 my $m = $mapping_mab2_marc->{ $field->[0] };
-                #say $m->{name} . ': ' . $field->[3];
+                #say sprintf( '%s (%s)', $field->[3], $m->{info});
                 add_field(
                     $marc_record,
                     $m->{'marc-field'},
@@ -73,7 +73,8 @@ while ( my $mab_record_hash = $parser->next() ) {
     $marc_file->write($marc_record);
 }
 
-say "$count/$count_isbn";
+say "$count records exported.";
+#say "$count/$count_isbn";
 
 sub get_isbn {
     my ($record) = @_;
@@ -89,7 +90,9 @@ sub get_isbn {
 sub strip_isbn_prefix {
     my $isbn = shift;
     my $prefix = 'ISBN';
+    #my $prefix = 'ISBN ';
     if ( substr($isbn, 0, length $prefix) eq $prefix ) {
+        #$isbn = substr($isbn, length $prefix);
         $isbn = substr($isbn, 1 + length $prefix);
     }
     return $isbn;
@@ -104,63 +107,55 @@ sub get_mapping {
         headers    => "auto",
         encoding   => "UTF-8",
     );
-    # name, mab2-field, mab2-subfield, marc21-field, marc21-subfield, ind1, ind2
-    my $mapping_data = [
-        #[ 'Titel', '331', ' ', '245', 'a', ' ', ' ' ],
-        #[ 'ISBN', '540', ' ', '020', 'a', ' ', ' ' ],
-    ];
-    for my $mapping (@$csv) {
-        my $re_MAB2 = qr/
-                     ^
-                     (\d\d\d)
-                     ([a-z])?
-                     $
-        /xms;
-        my ($field_MAB, $subfield_MAB) = $mapping->{MAB2} =~ $re_MAB2;
-
-        my $re_MARC21 = qr/
-                     ^
-                     (\d\d\d)
-                     ([a-z])
-                     (?:
-                         \ 
-                         ([\w\#])
-                         ([\w\#])
-                     )?
-                     $
-        /xms;
-        my ($field_MARC, $subfield_MARC, $ind1_MARC, $ind2_MARC) = $mapping->{MARC21} =~ $re_MARC21;
-
-        if ($field_MAB && $field_MARC) {
-            say "map " . $mapping->{MAB2} . " to " . $mapping->{MARC21};
-            push $mapping_data->@*,
-                 [
-                     $mapping->{Bezeichnung},
-                     $field_MAB,
-                     $subfield_MAB,
-                     $field_MARC,
-                     $subfield_MARC,
-                     $ind1_MARC,
-                     $ind2_MARC,
-                 ];
-        }
-        else {
-          print "invalid mapping: " . $mapping->{MAB2} . " to " . $mapping->{MARC21};
-          say " (MAB2 ERROR)" unless $field_MAB;
-          say " (MARC21 ERROR)" unless $field_MARC;
-        }
-    }
 
     my $mapping_mab2_marc = {};
-    for my $m ($mapping_data->@*) {
-        $mapping_mab2_marc->{ $m->[1] } = {
-                                            name            => $m->[0],
-                                            'mab2-subfield' => $m->[2],
-                                            'marc-field'    => $m->[3],
-                                            'marc-subfield' => $m->[4],
-                                            'marc-ind1'     => $m->[5],
-                                            'marc-ind2'     => $m->[6],
-                                          }
+    my $count = 1; # start at 1 because of csv HEADER line
+    for my $mapping (@$csv) {
+        $count++;
+	my $field_MARC    = $mapping->{FIELD};
+	my $ind1_MARC     = $mapping->{IND1};
+	my $ind2_MARC     = $mapping->{IND2};
+	my $subfield_MARC = $mapping->{SUBFIELD};
+	my $info_MARC     = $mapping->{INFO} // '';
+
+	my $marc = "$field_MARC $ind1_MARC$ind2_MARC \$$subfield_MARC";
+
+        my $re_MAB2 = qr/
+                          ^
+                          (\d\d\d)
+                          ([a-zA-Z0-9\ ])
+                          $
+                      /xms;
+        my ($field_MAB, $subfield_MAB) = $mapping->{MAB2} =~ $re_MAB2;
+
+        if (   defined $field_MAB
+            && defined $subfield_MAB
+	    && length $field_MARC
+	    && length $ind1_MARC
+	    && length $ind2_MARC
+	    && length $subfield_MARC
+        ) {
+            say sprintf('map [%s%s] to [%s]', $field_MAB, $subfield_MAB, $marc);
+
+            $mapping_mab2_marc->{ $field_MAB } = {
+                                                    'mab2-field'    => $field_MAB,
+                                                    'mab2-subfield' => $subfield_MAB,
+                                                    'marc-field'    => $field_MARC,
+                                                    'marc-ind1'     => $ind1_MARC,
+                                                    'marc-ind2'     => $ind2_MARC,
+                                                    'marc-subfield' => $subfield_MARC,
+                                                    info            => $info_MARC,
+                                                 };
+        }
+        else {
+            print "invalid mapping: $field_MAB$subfield_MAB to $marc (line $count in mapping file)";
+	    if ($field_MAB) {
+                say " (MARC21 ERROR)";
+            }
+	    else {
+                say " (MAB2 ERROR)";
+	    }
+        }
     }
 
     return $mapping_mab2_marc;
