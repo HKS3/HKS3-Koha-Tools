@@ -5,8 +5,8 @@ use utf8;
 use Path::Tiny;
 
 use HKS3::MARC21Web;
-use MARC::File::XML();
-# use MARC::File::XML (DefaultEncoding=>'utf8');
+# use MARC::File::XML();
+use MARC::File::XML (DefaultEncoding=>'utf8');
 use Text::CSV qw( csv );
 MARC::File::XML->default_record_format('MARC21');
 use MARC::Charset;
@@ -23,8 +23,7 @@ my $csv = csv(in => $infile,
              );
 
 
-# Notiz von david: sollte das ned mit UTF-8 encoding sein? ...>>out( 'marc.xml', 'UTF-8' );
-my $file = MARC::File::XML->out( 'marc.xml' );
+my $file = MARC::File::XML->out( 'auth_marc.xml' );
 
 for my $line (@$csv) {
     my $xml = HKS3::MARC21Web::get_empty_auth_record;
@@ -42,6 +41,7 @@ for my $line (@$csv) {
              'a' => $line->{Auth},
      );
     
+    printf ("%s\n", $line->{Auth});
     push @fields, MARC::Field->new(
          '942','','',
              'a' => 'TOPIC_TERM',
