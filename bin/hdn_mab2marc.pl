@@ -89,11 +89,9 @@ sub get_isbn {
 }
 sub strip_isbn_prefix {
     my $isbn = shift;
-    my $prefix = 'ISBN';
-    #my $prefix = 'ISBN ';
+    my $prefix = 'ISBN ';
     if ( substr($isbn, 0, length $prefix) eq $prefix ) {
-        #$isbn = substr($isbn, length $prefix);
-        $isbn = substr($isbn, 1 + length $prefix);
+        $isbn = substr($isbn, length $prefix);
     }
     return $isbn;
 }
