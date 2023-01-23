@@ -19,30 +19,78 @@ use Getopt::Long;
 use DateTime;
 use Data::Dumper;
 use Encode qw(decode encode);
+use ZOOM;
+use MARC::Record;
 
+my $z3950_connections = {};
 
 my $web_resources = {
     'dnb' => {
         url => "https://services.dnb.de/sru/dnb?version=1.1&operation=searchRetrieve&query=%s=%s&recordSchema=MARC21-xml",
         xml  => '//recordData/record',
+        search => 'dnb.isbn',
     },
     'loc' => {
         url => "http://lx2.loc.gov:210/lcdb?version=1.1&operation=searchRetrieve&query=bath.%s=%s&maximumRecords=10&recordSchema=MARCXML",
         xml => '//zs:searchRetrieveResponse/zs:records/zs:record/zs:recordData/record',
+        search => 'lccn',
      },
-    'k10p' => {
-#         url => "https://sru.bsz-bw.de/swb?version=1.1&query=pica.%s=%s&operation=searchRetrieve&maximumRecords=10&recordSchema=marcxmlk10os",
-        url => "https://sru.k10plus.de/opac-de-627?version=1.1&operation=searchRetrieve&query=pica.%s=%s&maximumRecords=10&recordSchema=marcxml",
+    'k10p-sru' => {
+        url => "https://sru.bsz-bw.de/swb?version=1.1&query=pica.%s=%s&operation=searchRetrieve&maximumRecords=10&recordSchema=marcxmlk10os",
         xml => '//zs:searchRetrieveResponse/zs:records/zs:record/zs:recordData/record',
+     },
+    'bvb-sru' => {
+        url => "http://bvbr.bib-bvb.de:5661/bvb01sru?version=1.1&recordSchema=marcxml&operation=searchRetrieve&query=marcxml.%s=%s&maximumRecords=1",
+        xml => '//zs:searchRetrieveResponse/zs:records/zs:record/zs:recordData/record',
+        search => 'idn',
+     },
+     'bnl' => {
+        type => 'Z3950',
+        url  => 'z3950cat.bl.uk:9909/ZBLACU',
+        search => '@attr 1=12 "%s"',
+     },
+     'harvard' => {
+        type => 'Z3950',
+        url  => 'hvd.alma.exlibrisgroup.com:1921/01HVD_INST',
+        search => '@attr 1=12 "%s"',
+     },
+     'yale' => {
+        type => 'Z3950',
+        url  => 'z3950.library.yale.edu:7090/voyager',
+        search => '@attr 1=12 "%s"',
+     },
+     'bobcat' => {
+        type => 'Z3950',
+        url  => 'aleph.library.nyu.edu:9991/NYU01PUB',
+        search => '@attr 1=12 "%s"',
+     },
+     'kobv' => {
+        type => 'Z3950',
+        url  => 'z3950.kobv.de:210/k2',
+        search => '@attr 1=12 "%s"',
+     },
+     'bvb' => {
+        type => 'Z3950',
+        url  => 'bvbr.bib-bvb.de:9991/BVB01MCZ',
+        search => '@attr 1=12 "%s"',
+     },
+     'k10p' => {
+        type => 'Z3950',
+        url  => 'z3950.k10plus.de:210/opac-de-627',
+        search => '@attr 1=12 "%s"',
+     },
+     'loc_z39' => {
+        type => 'Z3950',
+        url  => 'lx2.loc.gov:210/LCDB',
+        search => '@attr 1=12 "%s"',
      },
 };
 
 sub get_marc_via_id {
-    my ($id, $type, $cachedir, $sources, $verbose) = @_;
-    # $sources should be an arrayref [loc, dnb, ]
-
-    $verbose //= 0;
-
+    my $id = shift;
+    my $type = shift;
+    my $cachedir = shift;
+    my $sources = shift; # should be an arrayref [loc, dnb, ]
     my $xml;
     
     # $isbn =~ s/.*\/(.*)/$1/g;
@@ -51,25 +99,30 @@ sub get_marc_via_id {
 
         print Dumper $web_resources->{$source};
         # in k10plus the search term for isbn is isb
-        if ($type eq 'isbn') {
-            $type = $source eq 'k10p' ? 'isb' : 'isbn';
+        if ($source eq 'k10p' && $type eq 'isbn') {
+            $type = 'isb';
         }
         my $filename  = sprintf("%s/%s-sru-export-%s-%s.xml", $cachedir, $source, $type, $id);
-
-        printf("%s \n", $filename) if $verbose;
+        printf("%s \n", $filename);        
 
         if (-f $filename) {
             $xml = path($filename)->slurp_utf8;
-            printf("file length %d \n", length($xml)) if $verbose;
+            printf("length %d \n", length($xml));
             next if length($xml) == 0;
             return $xml;
         }
     
         # printf("Source %s\n", $source->{name});
-        my $url = sprintf($web_resources->{$source}->{url}, $type, $id);
-        $xml = fetch_marc_from_url($url, $filename, $web_resources->{$source}->{xml});
-        sleep(5);
-        return $xml if $xml &&  length($xml) > 0;
+        if ($web_resources->{$source}->{type} eq 'Z3950') {
+            $xml = fetch_marc_from_z3950($source, $filename, $id, $web_resources->{$source});
+            sleep(1);
+        } else {
+            my $url = sprintf($web_resources->{$source}->{url}, $web_resources->{$source}->{search}, $id);
+            $xml = fetch_marc_from_url($url, $filename, $web_resources->{$source}->{xml});
+            sleep(5);
+        }
+        path($filename)->spew_utf8($xml);
+        return $xml if $xml && length($xml) > 0;
     }    
 
     return $xml;
@@ -106,7 +159,6 @@ sub fetch_marc_from_url {
         }
         # write_file($filename, {binmode => ':raw'}, $xml);
         # write_file($filename, {binmode => ':raw'}, $xml);
-        path($filename)->spew_utf8($xml);
         return $xml;
     }
     else {
@@ -131,5 +183,53 @@ XML
 return $xml;
 }
 
+
+sub fetch_marc_from_z3950 {
+    my $source = shift;
+    my $filenname = shift;
+    my $id = shift;
+    my $source_attrib = shift;
+ 
+    my $conn;
+    # die 'no user/pwd given' unless $ENV{LIB_USER} && $ENV{LIB_PASSWORD};
+
+    printf "[%s] [%s] %s\n", $ENV{LIB_USER}, $ENV{LIB_PASSWORD}, $web_resources->{$source}->{url};
+    printf "searchin [%s]\n", $id;
+
+    if (! exists($z3950_connections->{$source})) { 
+        my $o1 = new ZOOM::Options();
+        $o1->option(user => $ENV{LIB_USER});
+        my $o2 = new ZOOM::Options();
+        $o2->option(password => $ENV{LIB_PASSWORD});
+        my $opts = new ZOOM::Options($o1, $o2);
+        $conn = create ZOOM::Connection($opts);
+        $conn->connect($web_resources->{$source}->{url});
+    # British National Bibliography number (only on BNB03U) 10
+    # Local control number    12
+    # print("server is '", $conn->option("serverImplementationName"), "'\n");
+        $conn->option(preferredRecordSyntax => "usmarc");
+        if ($conn->errcode() != 0) {
+            die("somthing went wrong: " . $conn->errmsg())
+        } else {
+            printf ("new [%s] connection \n", $source);
+        }
+        $z3950_connections->{$source} = $conn;
+    } else {
+        $conn = $z3950_connections->{$source};
+    }
+
+    my $searchstring = sprintf ('@attr 1=12 "%s"', $id);
+    my $rs = $conn->search_pqf( $searchstring );
+    my $n = $rs->size();
+    printf ("%s\n", $n);
+    return if $n == 0;
+    my $rec = $rs->record(0);
+    my $raw = $rec->raw();
+    my $marc = new_from_usmarc MARC::Record($raw);
+    # my $trans = $rec->render("charset=latin1,utf8");
+    # use Data::Dumper;
+    $rs->destroy();
+    return $marc->as_xml;
+}
 
 1;
