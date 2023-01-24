@@ -2078,6 +2078,34 @@ DISTRIBUTIONS
       Text::Wrap 0
       constant 0
       perl 5.008001
+  Net-Z3950-ZOOM-1.30
+    pathname: M/MI/MIRK/Net-Z3950-ZOOM-1.30.tar.gz
+    provides:
+      Net::Z3950 0.99
+      Net::Z3950::Connection 0.99
+      Net::Z3950::Manager 0.99
+      Net::Z3950::Op 0.99
+      Net::Z3950::ZOOM 1.30
+      ZOOM undef
+      ZOOM::CCL::Error undef
+      ZOOM::Connection undef
+      ZOOM::Error undef
+      ZOOM::Event undef
+      ZOOM::Exception undef
+      ZOOM::Log undef
+      ZOOM::Options undef
+      ZOOM::Package undef
+      ZOOM::Query undef
+      ZOOM::Query::CCL2RPN undef
+      ZOOM::Query::CQL undef
+      ZOOM::Query::CQL2RPN undef
+      ZOOM::Query::PQF undef
+      ZOOM::Record undef
+      ZOOM::ResultSet undef
+      ZOOM::ScanSet undef
+    requirements:
+      ExtUtils::MakeMaker 0
+      MARC::Record 1.38
   Number-Compare-0.03
     pathname: R/RC/RCLAMP/Number-Compare-0.03.tar.gz
     provides:

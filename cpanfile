@@ -12,3 +12,4 @@ requires 'Encode';
 requires 'MAB2::Parser::Disk';
 requires 'MARC::File::XML';
 requires 'MARC::Charset';
+requires 'ZOOM';
