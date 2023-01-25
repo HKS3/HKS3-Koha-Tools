@@ -109,7 +109,7 @@ sub get_marc_via_id {
             die "Source '$source' not available. Use one of these: [" . join(', ', keys $web_resources->%*) . ']';
         }
 
-        print Dumper $web_resources->{$source};
+        #print Dumper $web_resources->{$source};
         # in k10plus the search term for isbn is isb
         if ($source eq 'k10p' && $type eq 'isbn') {
             $type = 'isb';
