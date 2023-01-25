@@ -7,9 +7,6 @@ use feature qw/say/;
 use POSIX qw();
 use Exporter 'import';
 use XML::XPath;
-
-our @EXPORT_OK = qw(get_marc_via_id);
-
 use List::Util qw/ any /;
 use LWP;
 use Path::Tiny;
@@ -19,6 +16,16 @@ use Data::Dumper;
 use Encode qw(decode encode);
 use ZOOM;
 use MARC::Record;
+use MARC::File::XML qw//;
+
+our @EXPORT_OK = qw/
+                     get_marc_via_id
+                     get_empty_record
+                     get_empty_auth_record
+                     marc_record_from_xml
+                     add_field
+                     get_marc_file
+                 /;
 
 my $z3950_connections = {};
 
@@ -91,9 +98,16 @@ sub get_marc_via_id {
     my $sources = shift; # should be an arrayref [loc, dnb, ]
     my $xml;
 
+    if ( ! -d $cachedir ) {
+        die "cachedir is not a directory: $cachedir";
+    }
+
     # $isbn =~ s/.*\/(.*)/$1/g;
 
     foreach my $source (@$sources) {
+        if (! exists( $web_resources->{$source} ) ) {
+            die "Source '$source' not available. Use one of these: [" . join(', ', keys $web_resources->%*) . ']';
+        }
 
         print Dumper $web_resources->{$source};
         # in k10plus the search term for isbn is isb
@@ -153,6 +167,7 @@ sub fetch_marc_from_url {
             $xml = XML::XPath::XMLParser::as_string($node);
             last;
         }
+        $xml //= '';
         # write_file($filename, {binmode => ':raw'}, $xml);
         return $xml;
     }
@@ -172,6 +187,23 @@ sub get_empty_record {
   <leader>00199nam a22000977a 4500</leader>
   <controlfield tag="005">20221016160626.0</controlfield>
   <controlfield tag="008">221016b        |||||||| |||| 00| 0 ger d</controlfield>
+</record>
+XML
+
+    return $xml;
+}
+
+sub get_empty_auth_record {
+    my $xml = <<XML;
+<?xml version="1.0" encoding="UTF-8"?>
+<record
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd"
+    xmlns="http://www.loc.gov/MARC21/slim">
+
+  <leader>00207nz  a2200109n  4500</leader>
+  <controlfield tag="005">20221016160626.0</controlfield>
+  <controlfield tag="008">221108|| aca||babn           | a|a     d</controlfield>
 </record>
 XML
 
@@ -225,6 +257,28 @@ sub fetch_marc_from_z3950 {
     # use Data::Dumper;
     $rs->destroy();
     return $marc->as_xml;
+}
+
+sub get_marc_file {
+    my $filename = shift;
+    die "output file exists. ($filename)" if -f $filename;
+
+    MARC::File::XML->default_record_format('MARC21');
+    my $file = MARC::File::XML->out( $filename, 'UTF-8' );
+    return $file;
+}
+
+sub add_field {
+    my ($record, $field, $ind1, $ind2, $subfield, $value) = @_;
+    $record->append_fields(
+        MARC::Field->new( $field, $ind1, $ind2, $subfield, $value )
+    );
+}
+
+sub marc_record_from_xml {
+    my $xml = shift;
+    my $record = MARC::Record->new_from_xml( $xml, 'UTF-8', 'MARC21' );
+    return $record;
 }
 
 1;
