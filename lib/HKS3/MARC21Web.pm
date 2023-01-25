@@ -11,9 +11,7 @@ use XML::XPath;
 our @EXPORT_OK = qw(get_marc_via_id);
 
 use List::Util qw/ any /;
-
 use LWP;
-# use File::Slurp;
 use Path::Tiny;
 use Getopt::Long;
 use DateTime;
@@ -92,7 +90,7 @@ sub get_marc_via_id {
     my $cachedir = shift;
     my $sources = shift; # should be an arrayref [loc, dnb, ]
     my $xml;
-    
+
     # $isbn =~ s/.*\/(.*)/$1/g;
 
     foreach my $source (@$sources) {
@@ -103,7 +101,7 @@ sub get_marc_via_id {
             $type = 'isb';
         }
         my $filename  = sprintf("%s/%s-sru-export-%s-%s.xml", $cachedir, $source, $type, $id);
-        printf("%s \n", $filename);        
+        printf("%s \n", $filename);
 
         if (-f $filename) {
             $xml = path($filename)->slurp_utf8;
@@ -111,7 +109,7 @@ sub get_marc_via_id {
             next if length($xml) == 0;
             return $xml;
         }
-    
+
         # printf("Source %s\n", $source->{name});
         if ($web_resources->{$source}->{type} eq 'Z3950') {
             $xml = fetch_marc_from_z3950($source, $filename, $id, $web_resources->{$source});
@@ -123,7 +121,7 @@ sub get_marc_via_id {
         }
         path($filename)->spew_utf8($xml);
         return $xml if $xml && length($xml) > 0;
-    }    
+    }
 
     return $xml;
 }
@@ -132,8 +130,7 @@ sub fetch_marc_from_url {
     my $url = shift;
     my $filename = shift;
     my $record_node = shift;
-        
-    
+
     print "$url \n";
     my $req = HTTP::Request->new(GET => $url);
     my $ua = LWP::UserAgent->new;
@@ -142,7 +139,6 @@ sub fetch_marc_from_url {
     );
     my $agent = "sru downloader";
     $ua->agent($agent);
-
 
     $req->content_type('text/html');
     $req->protocol('HTTP/1.0');
@@ -158,7 +154,6 @@ sub fetch_marc_from_url {
             last;
         }
         # write_file($filename, {binmode => ':raw'}, $xml);
-        # write_file($filename, {binmode => ':raw'}, $xml);
         return $xml;
     }
     else {
@@ -167,7 +162,7 @@ sub fetch_marc_from_url {
 }
 
 sub get_empty_record {
-my $xml = <<XML;
+    my $xml = <<XML;
 <?xml version="1.0" encoding="UTF-8"?>
 <record
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -180,7 +175,7 @@ my $xml = <<XML;
 </record>
 XML
 
-return $xml;
+    return $xml;
 }
 
 
@@ -189,14 +184,14 @@ sub fetch_marc_from_z3950 {
     my $filenname = shift;
     my $id = shift;
     my $source_attrib = shift;
- 
+
     my $conn;
     # die 'no user/pwd given' unless $ENV{LIB_USER} && $ENV{LIB_PASSWORD};
 
     printf "[%s] [%s] %s\n", $ENV{LIB_USER}, $ENV{LIB_PASSWORD}, $web_resources->{$source}->{url};
-    printf "searchin [%s]\n", $id;
+    printf "searching [%s]\n", $id;
 
-    if (! exists($z3950_connections->{$source})) { 
+    if (! exists($z3950_connections->{$source})) {
         my $o1 = new ZOOM::Options();
         $o1->option(user => $ENV{LIB_USER});
         my $o2 = new ZOOM::Options();
