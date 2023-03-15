@@ -125,12 +125,12 @@ sub get_marc_via_id {
         }
 
         # printf("Source %s\n", $source->{name});
-        if ($web_resources->{$source}->{type} eq 'Z3950') {
+        if (exists $web_resources->{$source}{type} && $web_resources->{$source}{type} eq 'Z3950') {
             $xml = fetch_marc_from_z3950($source, $filename, $id, $web_resources->{$source});
             sleep(1);
         } else {
-            my $url = sprintf($web_resources->{$source}->{url}, $web_resources->{$source}->{search}, $id);
-            $xml = fetch_marc_from_url($url, $filename, $web_resources->{$source}->{xml});
+            my $url = sprintf($web_resources->{$source}{url}, $web_resources->{$source}{search}, $id);
+            $xml = fetch_marc_from_url($url, $filename, $web_resources->{$source}{xml});
             sleep(5);
         }
         path($filename)->spew_utf8($xml);
@@ -172,7 +172,7 @@ sub fetch_marc_from_url {
         return $xml;
     }
     else {
-            printf("Response %s\n", $response->code);
+        printf("Response %s\n", $response->code);
     }
 }
 
