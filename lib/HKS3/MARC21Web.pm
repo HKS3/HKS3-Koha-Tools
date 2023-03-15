@@ -119,7 +119,7 @@ sub get_marc_via_id {
 
         if (-f $filename) {
             $xml = path($filename)->slurp_utf8;
-            printf("length %d \n", length($xml));
+            printf("Found cache file. (length %d \n", length($xml)));
             next if length($xml) == 0;
             return $xml;
         }
@@ -145,7 +145,7 @@ sub fetch_marc_from_url {
     my $filename = shift;
     my $record_node_xpath = shift;
 
-    print "$url \n";
+    print "Fetching $url \n";
     my $req = HTTP::Request->new(GET => $url);
     my $ua = LWP::UserAgent->new;
     $ua->default_header(
