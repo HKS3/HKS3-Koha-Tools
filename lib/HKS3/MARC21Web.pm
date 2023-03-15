@@ -32,21 +32,21 @@ my $z3950_connections = {};
 my $web_resources = {
     'dnb' => {
         url => "https://services.dnb.de/sru/dnb?version=1.1&operation=searchRetrieve&query=%s=%s&recordSchema=MARC21-xml",
-        xml  => '//recordData/record',
+        xpath  => '//recordData/record',
         search => 'dnb.isbn',
     },
     'loc' => {
         url => "http://lx2.loc.gov:210/lcdb?version=1.1&operation=searchRetrieve&query=bath.%s=%s&maximumRecords=10&recordSchema=MARCXML",
-        xml => '//zs:searchRetrieveResponse/zs:records/zs:record/zs:recordData/record',
+        xpath => '//zs:searchRetrieveResponse/zs:records/zs:record/zs:recordData/record',
         search => 'lccn',
      },
     'k10p-sru' => {
         url => "https://sru.bsz-bw.de/swb?version=1.1&query=pica.%s=%s&operation=searchRetrieve&maximumRecords=10&recordSchema=marcxmlk10os",
-        xml => '//zs:searchRetrieveResponse/zs:records/zs:record/zs:recordData/record',
+        xpath => '//zs:searchRetrieveResponse/zs:records/zs:record/zs:recordData/record',
      },
     'bvb-sru' => {
         url => "http://bvbr.bib-bvb.de:5661/bvb01sru?version=1.1&recordSchema=marcxml&operation=searchRetrieve&query=marcxml.%s=%s&maximumRecords=1",
-        xml => '//zs:searchRetrieveResponse/zs:records/zs:record/zs:recordData/record',
+        xpath => '//zs:searchRetrieveResponse/zs:records/zs:record/zs:recordData/record',
         search => 'idn',
      },
      'bnl' => {
@@ -130,7 +130,7 @@ sub get_marc_via_id {
             sleep(1);
         } else {
             my $url = sprintf($web_resources->{$source}{url}, $web_resources->{$source}{search}, $id);
-            $xml = fetch_marc_from_url($url, $filename, $web_resources->{$source}{xml});
+            $xml = fetch_marc_from_url($url, $filename, $web_resources->{$source}{xpath});
             sleep(5);
         }
         path($filename)->spew_utf8($xml);
@@ -143,7 +143,7 @@ sub get_marc_via_id {
 sub fetch_marc_from_url {
     my $url = shift;
     my $filename = shift;
-    my $record_node = shift;
+    my $record_node_xpath = shift;
 
     print "$url \n";
     my $req = HTTP::Request->new(GET => $url);
@@ -160,8 +160,8 @@ sub fetch_marc_from_url {
     my $response = $ua->request($req);
     if ($response->is_success) {
         my $xp = XML::XPath->new(xml => $response->content);
-        printf("%s \n", $record_node);
-        my $nodeset = $xp->find($record_node);
+        printf("XPath: %s \n", $record_node_xpath);
+        my $nodeset = $xp->find($record_node_xpath);
         my $xml;
         foreach my $node ($nodeset->get_nodelist) {
             $xml = XML::XPath::XMLParser::as_string($node);
