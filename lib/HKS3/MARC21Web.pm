@@ -119,7 +119,7 @@ sub get_marc_via_id {
 
         if (-f $filename) {
             $xml = path($filename)->slurp_utf8;
-            printf("Found cache file. (length %d \n", length($xml)));
+            printf("Found cache file. (length %d)\n", length($xml));
             next if length($xml) == 0;
             return $xml;
         }
