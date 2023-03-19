@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use feature qw/say/;
 use Exporter qw/import/;
+use Text::CSV qw/ csv /;
+use Cwd;
 
 our @EXPORT_OK = qw/ mab2hash get_mapping /;
 
