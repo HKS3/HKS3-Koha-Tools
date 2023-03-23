@@ -20,6 +20,7 @@ use Data::Dumper;
 
 our @EXPORT_OK = qw/
                     parse_file
+					to_marc
                  /;
 
 
@@ -57,26 +58,57 @@ sub parse_file {
             $current_value .= " $line";
         } else {
             if ($current_field && $current_value) {
-                $record->{$current_field} = $current_value;
+                push @{$record->{$current_field}}, $current_value;
+				$current_field = '';
+				$current_value = '';
             }
             # my ($field, $value) = split / /, $line, 2;
             my ($field, $value) = $line =~ /(.{4}).(.*)/;
 		$field =~ s/\s+$//;
-            #if ($field =~ /^75\d\d/) {
-            push @{$record->{$field}}, $value if $value !~ /^\s*$/;
-            #} else {
-            #    $current_field = $field;
-            #    $current_value = $value;
-            #}
+			printf "%s %s\n", $field, $value;
+            # push (@{$record->{$field}}, $value) if $value !~ /^\s*$/;
+            $current_field = $field;
+            $current_value = $value;
         }
     }
 
     if (keys %$record) {
         push @records, $record;
     }
-
     return \@records;
 }
+
+## 7510 buch 11/9
+## 7510 1602/P IGF
+## 7520 buch 11/9
+## 7520 1602/P IGF
+## 7550 28763
+## 7550 1602/P IGF
+## 7560 Verb.Nr.: 28763
+## 7560 Verb.Nr.: 1602/P IGF
+## 7570   -  Sign.: buch 11/9
+## 7570   -  Sign.: 1602/P IGF
+## 7600 Sto.: IKT Petzenkirchen
+## 7600 Sto.: IGF Scharfling | Gewässerökol
+
+
+sub to_marc {
+	my $record = shift;
+	my $mapping = shift;
+
+
+
+	print Dumper $record->{'7570'};
+
+	foreach my $f (sort keys %$record) {
+		if ($f =~ /^75/) {
+			printf ("%s \n", $f);
+		}
+	}
+
+}
+
+
 
 1;
 
