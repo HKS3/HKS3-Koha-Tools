@@ -114,7 +114,9 @@ sub get_marc_via_id {
         if ($source eq 'k10p' && $type eq 'isbn') {
             $type = 'isb';
         }
-        my $filename  = sprintf("%s/%s-sru-export-%s-%s.xml", $cachedir, $source, $type, $id);
+        my $save_id = $id;
+        $save_id=~s{/}{_};
+        my $filename  = sprintf("%s/%s-sru-export-%s-%s.xml", $cachedir, $source, $type, $save_id);
         printf("%s \n", $filename);
 
         if (-f $filename) {
