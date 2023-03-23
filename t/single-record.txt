@@ -1,0 +1,71 @@
+ HDR TIT00000007 04
+CMD  IDN=1-* #n STS=ag
+IDN  7
+SDN  27.04.2005
+SDU  04.12.2009
+TYP  1
+MEX  2
+2000*Baur, Werner H.
+2000*Rapp, Jörg
+2001*Rapp, Jörg
+3000 Gesunde Fische
+3040  : Praktische Anleitung zum Vorbeugen, Erkennen und Behandeln von Fischkran
+     kheiten
+3700 2. neubearbeitete Auflage
+4000 Berlin
+4010 Parey Verlag
+4040 2003
+4102 S. 317
+4400 Literaturangaben
+4600 3-8263-3402-7
+4671 BAWW
+4672 ram ; rs
+5100 Monographie / Stücktitel
+5650 Fischkrankheiten
+5650 Parasiten
+5655 Fischkrankheiten
+5655 Parasiten
+7510 buch 11/9
+7510 1602/P IGF
+7520 buch 11/9
+7520 1602/P IGF
+7550 28763
+7550 1602/P IGF
+7560 Verb.Nr.: 28763
+7560 Verb.Nr.: 1602/P IGF
+7570   -  Sign.: buch 11/9
+7570   -  Sign.: 1602/P IGF
+7600 Sto.: IKT Petzenkirchen
+7600 Sto.: IGF Scharfling | Gewässerökol
+STO1 IKT Petzenkirchen
+STO1 IGF Scharfling
+STO2 IKT
+STO2 IGF
+7620  
+7630  
+7630  
+7660 Normale Ausleihe
+7675  
+7675  
+9000 Fischkrankheiten schnell erkennen, vorläufige Diagnosen stellen und sachge
+     rechte Maßnahmen ergreifen - hierfür bietet dieses Buch dem Praktiker ein
+     en übersichtlichen und kompetenten Leitfaden. Teichwirten, Wissenschaftler
+     n und Tierärzten in Fischlaboratorien, Naturschützern und Hobbyfischern d
+     ient das Buch als sachkundiges Nachschlagewerk, das an keinem Gewässer feh
+     len darf.#013#013Die zweite, völlig neu bearbeitete Auflage wurde um aktue
+     lle wissenschaftliche Erkenntnisse, neu auftretende Fischkrankheiten und ve
+     ränderte gesetzliche Bestimmungen in der EU erweitert.#013#013Themen des B
+     uches sind:#013#013 * Bestimmung der Gewässergüte#013 * Gefahren durch un
+     sachgemäßes Beangeln und Bewirtschaften#013 * Ernährungs- und umweltbedi
+     ngte Erkrankungen#013 * Bestimmungsschlüssel zur vorläufigen Diagnose von
+      Fischkrankheiten und Erkrankungen der Krebse#013 * Impfung und Behandlung
+      von Fischen#013 * Desinfektion in der Fischzucht#013 * Bekämpfung von Fis
+     chseuchen in der EU#013 * Fischsterben
+9950 {{http://www.parey.de}} Link anwählen
+VORP  
+VORP  
+VORK  
+VORK  
+B110 2
+ENDH
+ENDE

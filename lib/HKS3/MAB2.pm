@@ -5,7 +5,6 @@ use warnings;
 use feature qw/say/;
 use Exporter qw/import/;
 use Text::CSV qw/ csv /;
-use Cwd;
 
 our @EXPORT_OK = qw/ mab2hash get_mapping /;
 
@@ -20,7 +19,7 @@ sub mab2hash {
 }
 
 sub get_mapping {
-    my ($mappingfile) = @_;    
+    my ($mappingfile) = @_;
 
     my $csv = csv(
         in         => $mappingfile,
@@ -88,4 +87,4 @@ sub get_mapping {
 
 __END__
 
- printf "CN   %s \n", $mab->{'076'}->{i}->[0]->[1];
+ printf "CN   %s \n", $mab->{'076'}{i}[0][1];
