@@ -58,7 +58,8 @@ sub parse_file {
             $current_value .= " $line";
         } else {
             if ($current_field && $current_value) {
-                push @{$record->{$current_field}}, $current_value;
+                push @{$record->{$current_field}}, $current_value
+						if $current_value !~ /^\s*$/;
 				$current_field = '';
 				$current_value = '';
             }
