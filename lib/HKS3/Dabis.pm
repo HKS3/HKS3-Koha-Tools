@@ -16,13 +16,42 @@ use Data::Dumper;
 use Encode qw(decode encode);
 use MARC::Record;
 use MARC::File::XML qw//;
+use Text::CSV qw/ csv /;
 use Data::Dumper;
+use Moo;
 
 our @EXPORT_OK = qw/
                     parse_file
 					to_marc
+                    get_mapping
                  /;
 
+sub get_mapping {
+    my ($mappingfile) = @_;
+
+    my $csv = csv(
+        in         => $mappingfile,
+        sep_char   => ";",
+        quote_char => '"',
+        headers    => "auto",
+        encoding   => "UTF-8",
+    );
+
+    my $mapping2marc = {};
+    my $count = 1; # start at 1 because of csv HEADER line
+    for my $mapping (@$csv) {                 
+        $mapping->{field} = substr($mapping->{MARC21},0,3); 
+        $mapping->{subfield} = substr($mapping->{MARC21},3,1); 
+        $mapping->{ind1} = substr($mapping->{MARC21},4,1) // ' '; 
+        $mapping->{ind2} = substr($mapping->{MARC21},5,1) // ' '; 
+        $mapping2marc->{ $mapping->{dabis} } = $mapping;
+    }
+
+    return $mapping2marc;
+}
+
+
+1;
 
 sub parse_file {
     my $filename = shift;
@@ -66,7 +95,7 @@ sub parse_file {
             # my ($field, $value) = split / /, $line, 2;
             my ($field, $value) = $line =~ /(.{4}).(.*)/;
 		$field =~ s/\s+$//;
-			printf "%s %s\n", $field, $value;
+			# printf "%s %s\n", $field, $value;
             # push (@{$record->{$field}}, $value) if $value !~ /^\s*$/;
             $current_field = $field;
             $current_value = $value;
@@ -109,7 +138,7 @@ sub to_marc {
 
 }
 
-
+q{ listening to: Mahler 1. Symphonie, Bernstein/Wiener Philharmoniker, https://www.youtube.com/watch?v=ISBfOpztUZM };
 
 1;
 
