@@ -13,7 +13,7 @@ sub add {
     my @new_field = ($field, $ind1, $ind2);
     my $added=0;
     while (my ($sf, $val) = each %subfields) {
-        push(@new_field, $sf, $val) if $val;
+        push(@new_field, $sf, $val) if defined $val;
         $added++;
     }
     $record->insert_fields_ordered(MARC::Field->new( @new_field )) if $added;
