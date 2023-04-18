@@ -22,7 +22,7 @@ use Moo;
 
 our @EXPORT_OK = qw/
                     parse_file
-					to_marc
+                                        to_marc
                     get_mapping
                  /;
 
@@ -71,7 +71,7 @@ sub parse_file {
                 push @records, $record;
             } else {
                 $record = {'HDR' => [$1] };
-			}
+                        }
             $current_field = '';
             $current_value = '';
         } elsif ($line =~ /^END/) {
@@ -88,14 +88,14 @@ sub parse_file {
         } else {
             if ($current_field && $current_value) {
                 push @{$record->{$current_field}}, $current_value
-						if $current_value !~ /^\s*$/;
-				$current_field = '';
-				$current_value = '';
+                                                if $current_value !~ /^\s*$/;
+                                $current_field = '';
+                                $current_value = '';
             }
             # my ($field, $value) = split / /, $line, 2;
             my ($field, $value) = $line =~ /(.{4}).(.*)/;
-		$field =~ s/\s+$//;
-			# printf "%s %s\n", $field, $value;
+                $field =~ s/\s+$//;
+                        # printf "%s %s\n", $field, $value;
             # push (@{$record->{$field}}, $value) if $value !~ /^\s*$/;
             $current_field = $field;
             $current_value = $value;
@@ -123,18 +123,18 @@ sub parse_file {
 
 
 sub to_marc {
-	my $record = shift;
-	my $mapping = shift;
+        my $record = shift;
+        my $mapping = shift;
 
 
 
-	print Dumper $record->{'7570'};
+        print Dumper $record->{'7570'};
 
-	foreach my $f (sort keys %$record) {
-		if ($f =~ /^75/) {
-			printf ("%s \n", $f);
-		}
-	}
+        foreach my $f (sort keys %$record) {
+                if ($f =~ /^75/) {
+                        printf ("%s \n", $f);
+                }
+        }
 
 }
 
