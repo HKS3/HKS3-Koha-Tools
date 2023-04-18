@@ -29,6 +29,13 @@ sub insert_if_missing {
 sub upsert {
     my ($record, $field, $ind1, $ind2, %subfields) = @_;
 
+    # deal with control fields
+    if ($field =~ m/^00[135678]$/xms) {
+        my @notsopretty = %subfields; # extract control field number
+        upsert_control_field($record, $field, $notsopretty[1] );
+        return;
+    }
+
     if (my $f = $record->field($field)) {
         while (my ($sf, $val) = each %subfields) {
             $f->update($sf,$val) if defined $val;
