@@ -31,7 +31,7 @@ sub upsert {
 
     if (my $f = $record->field($field)) {
         while (my ($sf, $val) = each %subfields) {
-            $f->update($sf,$val) if $val;
+            $f->update($sf,$val) if defined $val;
         }
     }
     else {
