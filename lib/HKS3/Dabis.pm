@@ -39,11 +39,11 @@ sub get_mapping {
 
     my $mapping2marc = {};
     my $count = 1; # start at 1 because of csv HEADER line
-    for my $mapping (@$csv) {                 
-        $mapping->{field} = substr($mapping->{MARC21},0,3); 
-        $mapping->{subfield} = substr($mapping->{MARC21},3,1); 
-        $mapping->{ind1} = substr($mapping->{MARC21},4,1) // ' '; 
-        $mapping->{ind2} = substr($mapping->{MARC21},5,1) // ' '; 
+    for my $mapping (@$csv) {
+        $mapping->{field} = substr($mapping->{MARC21},0,3);
+        $mapping->{subfield} = substr($mapping->{MARC21},3,1);
+        $mapping->{ind1} = substr($mapping->{MARC21},4,1) // ' ';
+        $mapping->{ind2} = substr($mapping->{MARC21},5,1) // ' ';
         $mapping2marc->{ $mapping->{dabis} } = $mapping;
     }
 
