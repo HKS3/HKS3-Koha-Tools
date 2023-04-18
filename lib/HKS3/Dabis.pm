@@ -50,9 +50,6 @@ sub get_mapping {
     return $mapping2marc;
 }
 
-
-1;
-
 sub parse_file {
     my $filename = shift;
     my @lines = path($filename)->lines_utf8;
@@ -121,12 +118,9 @@ sub parse_file {
 ## 7600 Sto.: IKT Petzenkirchen
 ## 7600 Sto.: IGF Scharfling | Gewässerökol
 
-
 sub to_marc {
         my $record = shift;
         my $mapping = shift;
-
-
 
         print Dumper $record->{'7570'};
 
@@ -135,13 +129,9 @@ sub to_marc {
                         printf ("%s \n", $f);
                 }
         }
-
 }
 
-q{ listening to: Mahler 1. Symphonie, Bernstein/Wiener Philharmoniker, https://www.youtube.com/watch?v=ISBfOpztUZM };
-
 1;
-
 
 __END__
 
