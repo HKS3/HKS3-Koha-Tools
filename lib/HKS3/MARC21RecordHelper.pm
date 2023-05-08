@@ -5,6 +5,7 @@ use warnings;
 use Exporter 'import';
 use MARC::Record;
 use MARC::Field;
+use MARC::Charset;
 
 our @EXPORT_OK = qw(add insert_if_missing upsert upsert_control_field);
 
