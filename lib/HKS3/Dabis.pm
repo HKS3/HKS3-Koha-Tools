@@ -55,8 +55,8 @@ sub get_mapping {
 
 sub parse_file {
     my $filename = shift;
-    # my @lines = path($filename)->lines_utf8;
-    my @lines = path($filename)->lines;
+    my @lines = path($filename)->lines_utf8;
+    #my @lines = path($filename)->lines;
     my @records;
     my $record = {};
     my $current_field = '';
