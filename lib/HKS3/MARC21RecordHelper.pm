@@ -7,7 +7,7 @@ use MARC::Record;
 use MARC::Field;
 use MARC::Charset;
 
-our @EXPORT_OK = qw(add insert_if_missing upsert upsert_control_field);
+our @EXPORT_OK = qw(add delete_field insert_if_missing upsert upsert_control_field);
 
 sub add {
     my ($record, $field, $ind1, $ind2, %subfields) = @_;
@@ -56,6 +56,14 @@ sub upsert_control_field {
     else {
         $record->insert_fields_ordered(MARC::Field->new( $field, $value ));
     }
+}
+
+# just for the sake of completeness
+sub delete_field {
+    my ($record, $field ) = @_;
+	my @fields  = $record->field($field);
+	my $df = $record->delete_fields(@fields);
+	return $df;
 }
 
 q{ listening to: Clara Luzia - Howl at the Moon, gaze at the Stars };
