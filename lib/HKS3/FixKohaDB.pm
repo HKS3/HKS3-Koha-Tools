@@ -34,7 +34,7 @@ sub fix_koha_db {
             print '.';
         }
         $count++;
-        $sub->($row);
+        $sub->($row, $dbh);
     }
 }
 
