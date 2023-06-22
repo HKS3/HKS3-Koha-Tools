@@ -1,3 +1,123 @@
+ HDR TIT00000004 04
+CMD  IDN=1-* #n STS=ag
+IDN  4
+SDN  20.01.2000
+SDU  08.09.2009
+TYP  2
+MEX  1
+BDE  33
+3000*Aqua-press
+4000 Wien
+4010 Bohmann
+4400 Nebent.: Aqua press international. - Nachgewiesen 1998 -
+4671 BAWW
+4672 bt ; sa ; rs
+4700 Aqua press international
+5100 Zeitschrift
+5100 Serie
+5650 Wasserwirtschaft
+5655 Wasserwirtschaft
+7510 Zeitschrift/ 81
+7520 Zeitschrift/ 81
+7550 28121
+7560 Verb.Nr.: 28121  
+7570   -  Sign.: Zeitschrift/ 81
+7600 Sto.: IKT Petzenkirchen
+STO1 IKT Petzenkirchen
+STO2 IKT
+7620  
+7630  
+7660  
+7675  
+9000 wurde im September 2009 ausgeschieden, 2 Exemplaren wurden wegen Dok bzw. I
+     nhalt aufgehoben
+9950 {{http://www.aquamedia.at}} Link anwählen
+VORP  
+VORK  
+B107 1
+B100 33
+B110 1
+ENDH
+ HDR TIT00005912 04
+GET  BDE
+RNM  1
+IDN  5912
+SDN  25.08.2005
+SDU  03.11.2005
+TYP  1
+TYPF 2
+MEX  1
+1500 Wien: Bohmann
+3000*Aqua Press daNUbs: Grundlagenforschung für ein künftiges Nährstoffmanage
+     ment
+3050 ko
+3060 BAWW
+4000 Wien
+4040 2004
+4200 Aqua-press
+4210 Aqua-press :
+4250 Aqua-press
+4671 BAWW
+4672 sa ; db
+5100 Monographie / Stücktitel
+5770 Zeitschrift IKT
+7510 Zeitschrift/ 81
+7520 Zeitschrift/ 81
+7550 27710
+7560 Verb.Nr.: 27710  
+7570   -  Sign.: Zeitschrift/ 81
+7600 Sto.: IKT Petzenkirchen
+STO1 IKT Petzenkirchen
+STO2 IKT
+7620  
+7630  
+7660 Normale Ausleihe
+7675  
+9110 Zeitschrift/ 81
+VORP  
+VORK  
+B110 1
+ENDB
+ HDR TIT00006436 04
+GET  BDE
+RNM  2
+IDN  6436
+SDN  25.08.2005
+SDU  03.11.2005
+TYP  1
+TYPF 2
+MEX  1
+1500 Wien: Bohmann
+2840 / 1, 2005
+3000*aqua press
+3050 ko
+3060 BAWW
+4000 Wien
+4040 2005
+4200 Aqua-press
+4210 Aqua-press :
+4250 Aqua-press
+4671 BAWW
+4672 sa ; db
+5100 Monographie / Stücktitel
+5770 Zeitschrift IKT
+7510 Zeitschrift/ 81
+7520 Zeitschrift/ 81
+7550 26816
+7560 Verb.Nr.: 26816  
+7570   -  Sign.: Zeitschrift/ 81
+7600 Sto.: IKT Petzenkirchen
+STO1 IKT Petzenkirchen
+STO2 IKT
+7620  
+7630  
+7660 Ausgeschieden
+7675  
+9110 Zeitschrift/ 81
+VORP  
+VORK  
+B110 1
+ENDB
  HDR TIT00000007 04
 CMD  IDN=1-* #n STS=ag
 IDN  7
@@ -5,19 +125,12 @@ SDN  27.04.2005
 SDU  04.12.2009
 TYP  1
 MEX  2
-1400 Verlag
-1500 Verlagsort
-1501 2005
 2000*Baur, Werner H.
 2000*Rapp, Jörg
 2001*Rapp, Jörg
-2400*Landesfischereiverband Bayern eV.
-2403 Regionalverein Ausseerland
-2810 Heftnummer
-2820 Seiten 119-127
 3000 Gesunde Fische
 3040  : Praktische Anleitung zum Vorbeugen, Erkennen und Behandeln von Fischkran
-     kheiten
+     kheiten 
 3700 2. neubearbeitete Auflage
 4000 Berlin
 4010 Parey Verlag
@@ -38,8 +151,8 @@ MEX  2
 7520 1602/P IGF
 7550 28763
 7550 1602/P IGF
-7560 Verb.Nr.: 28763
-7560 Verb.Nr.: 1602/P IGF
+7560 Verb.Nr.: 28763  
+7560 Verb.Nr.: 1602/P IGF  
 7570   -  Sign.: buch 11/9
 7570   -  Sign.: 1602/P IGF
 7600 Sto.: IKT Petzenkirchen

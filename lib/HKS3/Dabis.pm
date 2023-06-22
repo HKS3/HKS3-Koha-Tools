@@ -16,17 +16,47 @@ use Data::Dumper;
 use Encode qw(decode encode);
 use MARC::Record;
 use MARC::File::XML qw//;
+use Text::CSV qw/ csv /;
 use Data::Dumper;
+use Moo;
 
 our @EXPORT_OK = qw/
                     parse_file
-					to_marc
+                    to_marc
+                    get_mapping
                  /;
 
+sub get_mapping {
+    my ($mappingfile) = @_;
+
+    my $csv = csv(
+        in         => $mappingfile,
+        sep_char   => ";",
+        quote_char => '"',
+        headers    => "auto",
+        encoding   => "UTF-8",
+    );
+
+    my $mapping2marc = {};
+    my $count = 1; # start at 1 because of csv HEADER line
+    {
+    no warnings ('uninitialized', 'substr');
+
+    for my $mapping (@$csv) {                 
+        $mapping->{field} = substr($mapping->{MARC21},0,3); 
+        $mapping->{subfield} = substr($mapping->{MARC21},3,1); 
+        $mapping->{ind1} = substr($mapping->{MARC21},4,1) // ' '; 
+        $mapping->{ind2} = substr($mapping->{MARC21},5,1) // ' '; 
+        $mapping2marc->{ $mapping->{dabis} } = $mapping;
+    }
+    }
+    return $mapping2marc;
+}
 
 sub parse_file {
     my $filename = shift;
     my @lines = path($filename)->lines_utf8;
+    #my @lines = path($filename)->lines;
     my @records;
     my $record = {};
     my $current_field = '';
@@ -36,18 +66,20 @@ sub parse_file {
     foreach my $line (@lines) {
     # printf "%d %s\n", $i++, $line;
         chomp $line;
-
-        if ($line =~ /^ HDR (.+)/) {
+        # next if $line =~ /^ENDE/;
+		if ($line =~ /^ENDE/) {
+		} elsif ($line =~ /^ HDR (.+)/) {
             if (keys %$record) {
                 push @records, $record;
             } else {
                 $record = {'HDR' => [$1] };
-			}
+            }
             $current_field = '';
             $current_value = '';
-        } elsif ($line =~ /^END/) {
+        } elsif ($line =~ /^END[BH]/) {
             if ($current_field && $current_value) {
-                $record->{$current_field} = $current_value;
+                push @{$record->{$current_field}}, $current_value;
+                # $record->{$current_field} = $current_value;
                 $current_field = '';
                 $current_value = '';
             }
@@ -55,17 +87,23 @@ sub parse_file {
             $record = {};
         } elsif ($line =~ /^\s+/) {
             # Continuation of previous value
-            $current_value .= " $line";
+            chomp($line);
+            $current_value .= "$line";
         } else {
             if ($current_field && $current_value) {
-                push @{$record->{$current_field}}, $current_value;
-				$current_field = '';
-				$current_value = '';
+                chomp($current_value);
+                push @{$record->{$current_field}}, $current_value
+                    if $current_value !~ /^\s*$/;
+                $current_field = '';
+                $current_value = '';
             }
             # my ($field, $value) = split / /, $line, 2;
             my ($field, $value) = $line =~ /(.{4}).(.*)/;
-		$field =~ s/\s+$//;
-			printf "%s %s\n", $field, $value;
+		    $field =~ s/\s+$//;
+            $value =~ s/\s+/ /;
+            chomp($field);
+            chomp($value);
+			# printf "%s %s\n", $field, $value;
             # push (@{$record->{$field}}, $value) if $value !~ /^\s*$/;
             $current_field = $field;
             $current_value = $value;
@@ -91,26 +129,20 @@ sub parse_file {
 ## 7600 Sto.: IKT Petzenkirchen
 ## 7600 Sto.: IGF Scharfling | Gewässerökol
 
-
 sub to_marc {
-	my $record = shift;
-	my $mapping = shift;
+        my $record = shift;
+        my $mapping = shift;
 
+        print Dumper $record->{'7570'};
 
-
-	print Dumper $record->{'7570'};
-
-	foreach my $f (sort keys %$record) {
-		if ($f =~ /^75/) {
-			printf ("%s \n", $f);
-		}
-	}
-
+        foreach my $f (sort keys %$record) {
+                if ($f =~ /^75/) {
+                        printf ("%s \n", $f);
+                }
+        }
 }
 
-
-
-1;
+q{ listening to: Mahler 1. Symphonie, Bernstein/Wiener Philharmoniker, https://www.youtube.com/watch?v=ISBfOpztUZM };
 
 
 __END__
