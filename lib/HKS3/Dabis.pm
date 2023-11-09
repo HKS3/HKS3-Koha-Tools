@@ -87,8 +87,8 @@ sub parse_file {
             $record = {};
         } elsif ($line =~ /^\s+/) {
             # Continuation of previous value
-            chomp($line);
-            $current_value .= "$line";
+            # chomp($line);
+            $current_value .= substr($line, 5);
         } else {
             if ($current_field && $current_value) {
                 chomp($current_value);

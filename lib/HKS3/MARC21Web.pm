@@ -47,7 +47,7 @@ my $web_resources = {
     'bvb-sru' => {
         url => "http://bvbr.bib-bvb.de:5661/bvb01sru?version=1.1&recordSchema=marcxml&operation=searchRetrieve&query=marcxml.%s=%s&maximumRecords=1",
         xpath => '//zs:searchRetrieveResponse/zs:records/zs:record/zs:recordData/record',
-        search => 'idn',
+        search => 'isbn',
      },
      'bnl' => {
         type => 'Z3950',
@@ -89,6 +89,17 @@ my $web_resources = {
         url  => 'lx2.loc.gov:210/LCDB',
         search => '@attr 1=12 "%s"',
      },
+     'zdb' => {
+        url  => 'https://services.dnb.de/sru/zdb?version=1.1&operation=searchRetrieve&query=%s=%s&recordSchema=MARC21-xml',
+        xpath  => '//recordData/record',
+        search => 'dnb.iss',
+     },
+     'zdbid' => {
+        url  => 'https://services.dnb.de/sru/zdb?version=1.1&operation=searchRetrieve&query=%s=%s&recordSchema=MARC21-xml',
+        xpath  => '//recordData/record',
+        search => 'dnb.zdbid',
+    }
+
 };
 
 sub get_marc_via_id {
